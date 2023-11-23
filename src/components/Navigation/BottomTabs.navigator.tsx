@@ -6,6 +6,7 @@ import { Category } from '../../screens/Category.screen';
 import { Favorite } from '../../screens/Favorite.screen';
 import { theme } from '../../theme';
 import { CategoryIcon, FavoriteIcon, HomeIcon } from '../Icons/Icons';
+import { ProductDetail } from '../../screens/ProductDetail.screen';
 
 const BottomTabs = createBottomTabNavigator();
 
@@ -38,7 +39,6 @@ export function BottomTabsNavigator() {
         component={Home}
         options={{
           title: 'Home',
-          // tabBarIcon: () => <SvgUri uri={homeIcon} height={50} width={50} />,
         }}
       />
       <BottomTabs.Screen
@@ -46,7 +46,6 @@ export function BottomTabsNavigator() {
         component={Category}
         options={{
           title: 'Categories',
-          // tabBarIcon: () => <SvgUri uri={homeIcon} height={50} width={50} />,
         }}
       />
       <BottomTabs.Screen
@@ -54,7 +53,13 @@ export function BottomTabsNavigator() {
         component={Favorite}
         options={{
           title: 'Favorite',
-          // tabBarIcon: () => <SvgUri uri={homeIcon} height={50} width={50} />,
+        }}
+      />
+      <BottomTabs.Screen
+        name="ProductDetail"
+        component={ProductDetail}
+        options={{
+          title: 'ProductDetail',
         }}
       />
     </BottomTabs.Navigator>
