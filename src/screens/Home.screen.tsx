@@ -10,11 +10,15 @@ import {
 import { useGetProductsQuery } from '../api/product/productApiSlice';
 import { HomeIcon } from '../components/Icons/Icons';
 import { useNavigation } from '@react-navigation/native';
+import { useAppDispatch } from '../redux/store';
+import { IProduct } from '../api/product/product.types';
+import { addToFavorite } from '../redux/favorites/favoriteSlice';
 
 const COLUMNS_COUNT = 2;
 
 export function Home() {
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
   const [skipNumber, setSkipNumber] = React.useState(0);
   const { data, error, isLoading, isFetching } =
     useGetProductsQuery(skipNumber);
@@ -26,7 +30,9 @@ export function Home() {
     }
   };
 
-  const handleFavoritePress = (productId: string) => {};
+  const handleFavoritePress = (product: IProduct) => {
+    dispatch(addToFavorite(product));
+  };
 
   const handleProductItemClick = (productId: number) => {
     navigation.navigate('ProductDetail', { productId });
@@ -45,7 +51,7 @@ export function Home() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.favoriteIcon}
-          onPress={() => handleFavoritePress(item.id)}>
+          onPress={() => handleFavoritePress(item)}>
           {/*<Ionicons*/}
           {/*  name={favorites.includes(item.id) ? 'heart' : 'heart-outline'}*/}
           {/*  size={24}*/}

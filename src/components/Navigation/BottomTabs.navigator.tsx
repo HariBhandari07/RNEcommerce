@@ -7,6 +7,7 @@ import { Favorite } from '../../screens/Favorite.screen';
 import { theme } from '../../theme';
 import { CategoryIcon, FavoriteIcon, HomeIcon } from '../Icons/Icons';
 import { ProductDetail } from '../../screens/ProductDetail.screen';
+import { Cart } from '../../screens/Cart.screen';
 
 const BottomTabs = createBottomTabNavigator();
 
@@ -55,13 +56,8 @@ export function BottomTabsNavigator() {
           title: 'Favorite',
         }}
       />
-      <BottomTabs.Screen
-        name="ProductDetail"
-        component={ProductDetail}
-        options={{
-          title: 'ProductDetail',
-        }}
-      />
+      <BottomTabs.Screen name="ProductDetail" component={ProductDetail} />
+      <BottomTabs.Screen name="Cart" component={Cart} />
     </BottomTabs.Navigator>
   );
 }
