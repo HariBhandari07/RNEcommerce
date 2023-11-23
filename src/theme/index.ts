@@ -11,10 +11,16 @@ export const theme = {
   darkBlue: '#153075',
   darkYellow: '#F9B023',
   yellow: '#FFC83A',
+  white: '#fff',
 
   fontFamilyBold: 'Manrope',
   fontFamilyRegular: 'Manrope',
-  fontFamilyLight: 'Kalam-Light',
-  h1Bold: '30px',
+  fontFamilyLight: 'Manrope',
+  h1Bold: {
+    fontFamily: 'Manrope',
+    fontSize: '30px',
+    fontStyle: 'normal',
+    fontWeight: 700,
+  },
   h1SemiBold: '',
 };

@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { ICartProduct } from '../../api/product/product.types';
+import { RootState } from '../store';
 
 export interface ICartState {
   cartItems: Array<ICartProduct>;
@@ -49,4 +50,8 @@ export const cartSlice = createSlice({
 
 export const { addToCart, subtractFromCart, removeFromCart } =
   cartSlice.actions;
+
+// Selectors
+export const cartItemCount = (state: RootState) =>
+  state.cart.cartItems.reduce((sum, cur) => sum + cur.cartQty, 0);
 export default cartSlice.reducer;

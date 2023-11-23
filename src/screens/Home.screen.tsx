@@ -1,24 +1,22 @@
 import React from 'react';
 import {
   FlatList,
-  Image,
   StyleSheet,
-  Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Text from '../components/Text/CustomFontText';
 import { useGetProductsQuery } from '../api/product/productApiSlice';
-import { HomeIcon } from '../components/Icons/Icons';
-import { useNavigation } from '@react-navigation/native';
-import { useAppDispatch } from '../redux/store';
+import { SearchIcon } from '../components/Icons/Icons';
 import { IProduct } from '../api/product/product.types';
-import { addToFavorite } from '../redux/favorites/favoriteSlice';
+import { theme } from '../theme';
+import { CartButton } from '../components/Button/CartButton';
+import { ProductCard } from '../components/ProductCards/ProductCard';
 
 const COLUMNS_COUNT = 2;
 
 export function Home() {
-  const navigation = useNavigation();
-  const dispatch = useAppDispatch();
   const [skipNumber, setSkipNumber] = React.useState(0);
   const { data, error, isLoading, isFetching } =
     useGetProductsQuery(skipNumber);
@@ -30,59 +28,64 @@ export function Home() {
     }
   };
 
-  const handleFavoritePress = (product: IProduct) => {
-    dispatch(addToFavorite(product));
-  };
-
-  const handleProductItemClick = (productId: number) => {
-    navigation.navigate('ProductDetail', { productId });
-  };
-
-  // Function to render each product item
-  const renderItem = ({ item }) => {
-    return (
-      <View style={styles.productContainer}>
-        <TouchableOpacity onPress={() => handleProductItemClick(item.id)}>
-          <Image source={{ uri: item?.thumbnail }} style={styles.thumbnail} />
-          <View style={styles.productInfo}>
-            <Text>{item?.title}</Text>
-            <Text>{item?.price}</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.favoriteIcon}
-          onPress={() => handleFavoritePress(item)}>
-          {/*<Ionicons*/}
-          {/*  name={favorites.includes(item.id) ? 'heart' : 'heart-outline'}*/}
-          {/*  size={24}*/}
-          {/*  color="red"*/}
-          {/*/>*/}
-          <HomeIcon />
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const renderItem = React.useCallback(
+    ({ item, index }: { item: IProduct; index: number }) => (
+      <ProductCard product={item} index={index} />
+    ),
+    [],
+  );
 
   return (
     <View style={styles.container}>
-      <Text>Hari Bhandari</Text>
+      <View style={styles.header}>
+        <View style={styles.userCartSection}>
+          <Text style={styles.userAddressText}>Hey, Hari</Text>
+          <CartButton />
+        </View>
+        {/*/!*SearchInput*!/*/}
+        <View style={styles.searchContainer}>
+          <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
+            <SearchIcon />
+          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Search Products or store"
+            placeholderTextColor="#8891A5"
+          />
+        </View>
+        {/*User Delivery Info*/}
+        <View style={styles.userInfoContainer}>
+          <View>
+            <Text style={styles.userInfoQuestion}>DELIVERY TO</Text>
+            <Text style={styles.userInfoAnswer}>Green Way 3000, Sylhet</Text>
+          </View>
+
+          <View>
+            <Text style={styles.userInfoQuestion}>WITHIN</Text>
+            <Text style={styles.userInfoAnswer}>1 Hour</Text>
+          </View>
+        </View>
+      </View>
       {isLoading ? <Text>Loading...</Text> : null}
       {!isLoading && data
         ? Array.isArray(data?.products) &&
           data?.products?.length > 0 && (
-            <FlatList
-              data={data?.products}
-              key={`${COLUMNS_COUNT}`} // Update the key when the number of columns changes
-              keyExtractor={item => item.id}
-              renderItem={renderItem}
-              numColumns={COLUMNS_COUNT}
-              onEndReached={loadMoreProducts}
-            />
+            <View style={styles.mainContainer}>
+              <Text style={styles.recommended}>Recommended</Text>
+              <FlatList
+                data={data?.products}
+                keyExtractor={item => item.id.toString()}
+                renderItem={renderItem}
+                numColumns={COLUMNS_COUNT}
+                onEndReached={loadMoreProducts}
+                onEndReachedThreshold={0.7}
+              />
+            </View>
           )
         : null}
-      {data &&
-        Array.isArray(data?.products) &&
-        data?.products?.length === 0 && <Text>No Products Found</Text>}
+      {/*{data &&*/}
+      {/*  Array.isArray(data?.products) &&*/}
+      {/*  data?.products?.length === 0 && <Text>No Products Found</Text>}*/}
     </View>
   );
 }
@@ -91,24 +94,71 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  productContainer: {
+  header: {
+    backgroundColor: theme.blue,
+    padding: 52,
+    paddingRight: 21,
+    paddingBottom: 12,
+    paddingLeft: 20,
+  },
+  userCartSection: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  userAddressText: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: theme.black1,
+  },
+  searchContainer: {
+    marginTop: 35,
+    marginBottom: 29,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: theme.darkBlue,
+    borderRadius: 28,
+    paddingVertical: 19,
+    paddingHorizontal: 28,
+    height: 56,
+  },
+  input: {
+    paddingLeft: 12,
+    flex: 1,
+    height: 40,
+    fontSize: 16,
+  },
+  searchButton: {},
+  userInfoContainer: {
+    display: 'flex',
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-    flex: 1,
   },
-  thumbnail: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
+  userInfoQuestion: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: theme.black1,
+    opacity: 0.5,
+    marginBottom: 4,
   },
-  productInfo: {
-    flex: 1,
+  userInfoAnswer: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: theme.black1,
+    fontFamily: 'Manroe',
   },
-  favoriteIcon: {
-    marginLeft: 10,
+  recommended: {
+    fontSize: 30,
+    fontWeight: '400',
+    lineHeight: 38,
+    color: '#1E222B',
+  },
+  mainContainer: {
+    backgroundColor: theme.white,
+    paddingTop: 30,
+    paddingRight: 20,
+    paddingLeft: 20,
+    paddingBottom: 60,
   },
 });
