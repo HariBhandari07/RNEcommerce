@@ -19,7 +19,8 @@ const COLUMNS_COUNT = 2;
 
 export function Home() {
   const [skipNumber, setSkipNumber] = React.useState(0);
-  const { data, isError, isLoading } = useGetProductsQuery(skipNumber);
+  const { data, isError, isLoading, isFetching } =
+    useGetProductsQuery(skipNumber);
 
   const loadMoreProducts = () => {
     if (data && data?.products.length < data?.total) {
@@ -88,6 +89,13 @@ export function Home() {
                 numColumns={COLUMNS_COUNT}
                 onEndReached={loadMoreProducts}
                 onEndReachedThreshold={0.7}
+                ListFooterComponent={() =>
+                  isFetching ? (
+                    <View style={styles.loaderContainer}>
+                      <Text style={styles.loadingText}>Loading...</Text>
+                    </View>
+                  ) : null
+                }
               />
             </View>
           )
@@ -111,6 +119,16 @@ const styles = StyleSheet.create({
     paddingRight: 21,
     paddingBottom: 12,
     paddingLeft: 20,
+  },
+  loaderContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    height: 300,
+  },
+  loadingText: {
+    color: theme.black90,
+    fontSize: 20,
+    fontWeight: '600',
   },
   userCartSection: {
     display: 'flex',
