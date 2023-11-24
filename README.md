@@ -1,4 +1,30 @@
+
+### Hi
+- I have used redux (redux toolkit and rtk query) for state management.
+- Node version used: 18.17.1
+- Regarding Favorite, it toggles i.e. if you click it once it favorites and click again it unfavorites and so on.
+- I have ignored some of the design that wasn't useful in the functionality
+- All the required screen and functionality should work correctly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+
+
+
 
 # Getting Started
 
