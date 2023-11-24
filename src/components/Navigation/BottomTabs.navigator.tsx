@@ -8,14 +8,26 @@ import { theme } from '../../theme';
 import { CategoryIcon, FavoriteIcon, HomeIcon, MoreIcon } from '../Icons/Icons';
 import { ProductDetail } from '../../screens/ProductDetail.screen';
 import { Cart } from '../../screens/Cart.screen';
+import { createStackNavigator } from '@react-navigation/stack';
 
 const BottomTabs = createBottomTabNavigator();
+
+const Stack = createStackNavigator();
+const HomeStack = () => (
+  <Stack.Navigator
+    screenOptions={() => ({
+      headerShown: false,
+    })}>
+    <Stack.Screen name="Product" component={Home} />
+    <Stack.Screen name="ProductDetail" component={ProductDetail} />
+  </Stack.Navigator>
+);
 
 export function BottomTabsNavigator() {
   return (
     <BottomTabs.Navigator
       screenOptions={({ route }) => ({
-        tabBarActiveTintColor: theme.black45,
+        tabBarActiveTintColor: theme.darkYellow,
         tabBarInactiveTintColor: theme.black20,
         tabBarShowLabel: true,
         headerShown: false,
@@ -34,48 +46,33 @@ export function BottomTabsNavigator() {
           borderTopLeftRadius: 30,
           backgroundColor: theme.black1,
         },
-        tabBarIcon: ({ color, size }) => {
+        tabBarIcon: ({ focused }) => {
           if (route.name === 'Home') {
-            return <HomeIcon />;
+            return <HomeIcon color={focused ? theme.yellow : theme.black100} />;
           }
 
           if (route.name === 'Category') {
-            return <CategoryIcon />;
+            return (
+              <CategoryIcon color={focused ? theme.yellow : theme.black100} />
+            );
           }
 
           if (route.name === 'Favorite') {
-            return <FavoriteIcon />;
+            return (
+              <FavoriteIcon color={focused ? theme.yellow : theme.black100} />
+            );
           }
 
-          if (route.name === 'More') {
-            return <MoreIcon />;
+          if (route.name === 'Cart') {
+            return <MoreIcon color={focused ? theme.yellow : theme.black100} />;
           }
 
           return null;
         },
       })}>
-      <BottomTabs.Screen
-        name="Home"
-        component={Home}
-        options={{
-          title: 'Home',
-        }}
-      />
-      <BottomTabs.Screen
-        name="Category"
-        component={Category}
-        options={{
-          title: 'Categories',
-        }}
-      />
-      <BottomTabs.Screen
-        name="Favorite"
-        component={Favorite}
-        options={{
-          title: 'Favorite',
-        }}
-      />
-      <BottomTabs.Screen name="ProductDetail" component={ProductDetail} />
+      <BottomTabs.Screen name="Home" component={HomeStack} />
+      <BottomTabs.Screen name="Category" component={Category} />
+      <BottomTabs.Screen name="Favorite" component={Favorite} />
       <BottomTabs.Screen name="Cart" component={Cart} />
     </BottomTabs.Navigator>
   );

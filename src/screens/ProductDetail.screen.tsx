@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import Text from '../components/Text/CustomFontText';
 import { useRoute } from '@react-navigation/native';
 import { useGetProductDetailQuery } from '../api/product/productApiSlice';
@@ -9,29 +9,46 @@ import { addToCart } from '../redux/cart/cartSlice';
 import { BackButton } from '../components/Button/BackButton';
 import { CartButton } from '../components/Button/CartButton';
 import { theme } from '../theme';
+import { toggleFavorite } from '../redux/favorites/favoriteSlice';
+import { Carousel } from '../components/Carousel/Carousel';
+import { Loader } from '../components/Icons/LoadingSpinner';
 
 export function ProductDetail() {
   const route = useRoute();
   const dispatch = useAppDispatch();
-  const { data, isLoading, error, isSuccess } = useGetProductDetailQuery(
-    // @ts-ignore
-    route?.params?.productId ?? '',
-    {
+  const { data, isLoading, isError, isFetching, isSuccess } =
+    useGetProductDetailQuery(
       // @ts-ignore
-      skip: !route?.params?.productId,
-    },
-  );
+      route?.params?.productId ?? '',
+      {
+        // @ts-ignore
+        skip: !route?.params?.productId,
+      },
+    );
 
   const handleAddToCart = () => {
     dispatch(addToCart(data));
   };
 
+  const handleAddToFavorite = () => {
+    dispatch(toggleFavorite(data));
+  };
+
   // @ts-ignore
-  if (!route.params.productId) return null;
+  if (!route.params?.productId) return null;
   return (
     <View>
-      {isLoading && <Text>Loading...</Text>}
-      {isSuccess ? (
+      {isLoading && (
+        <View style={styles.loaderContainer}>
+          <Loader />
+        </View>
+      )}
+      {isError ? (
+        <View style={styles.loaderContainer}>
+          <Text>Something went wrong. Please try again later.</Text>
+        </View>
+      ) : null}
+      {!isFetching && isSuccess ? (
         <View>
           <View style={styles.topContainer}>
             <View style={styles.header}>
@@ -40,28 +57,32 @@ export function ProductDetail() {
             </View>
             <Text style={styles.productTitle}>{data.title}</Text>
           </View>
-
-          <Image source={{ uri: data?.thumbnail }} style={styles.thumbnail} />
-          <View style={styles.productDetailsContainer}>
-            <View style={styles.priceContainer}>
-              <Text style={styles.price}>{data.price}</Text>
-              <Text>{data.discountPercentage} OFF</Text>
+          <ScrollView horizontal={false} nestedScrollEnabled>
+            <Carousel
+              images={data.images}
+              onAddToFavorite={handleAddToFavorite}
+            />
+            <View style={styles.productDetailsContainer}>
+              <View style={styles.priceContainer}>
+                <Text style={styles.price}>${data.price}</Text>
+                <Text>{data.discountPercentage} % OFF</Text>
+              </View>
+              <View style={styles.ctaContainer}>
+                <Button
+                  onPress={handleAddToCart}
+                  title="Add To Cart"
+                  variant="outlined"
+                />
+                <Button onPress={handleAddToCart} title="Buy Now" />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>Details</Text>
+                <Text style={[styles.detailsText, styles.description]}>
+                  {data?.description}
+                </Text>
+              </View>
             </View>
-            <View style={styles.ctaContainer}>
-              <Button
-                onPress={handleAddToCart}
-                title="Add To Cart"
-                variant="outlined"
-              />
-              <Button onPress={handleAddToCart} title="Buy Now" />
-            </View>
-            <View>
-              <Text style={styles.detailsText}>Details</Text>
-              <Text style={[styles.detailsText, styles.description]}>
-                {data?.description}
-              </Text>
-            </View>
-          </View>
+          </ScrollView>
         </View>
       ) : null}
     </View>
@@ -74,6 +95,12 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#1E222B',
     marginBottom: 14,
+  },
+  loaderContainer: {
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     display: 'flex',

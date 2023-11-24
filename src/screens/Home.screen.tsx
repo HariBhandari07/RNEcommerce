@@ -13,18 +13,17 @@ import { IProduct } from '../api/product/product.types';
 import { theme } from '../theme';
 import { CartButton } from '../components/Button/CartButton';
 import { ProductCard } from '../components/ProductCards/ProductCard';
+import { Loader } from '../components/Icons/LoadingSpinner';
 
 const COLUMNS_COUNT = 2;
 
 export function Home() {
   const [skipNumber, setSkipNumber] = React.useState(0);
-  const { data, error, isLoading, isFetching } =
-    useGetProductsQuery(skipNumber);
+  const { data, isError, isLoading } = useGetProductsQuery(skipNumber);
 
   const loadMoreProducts = () => {
-    if (data?.products?.length < data?.total) {
-      // TODO: check if data?.limit is number
-      setSkipNumber(prevValue => prevValue + data?.limit);
+    if (data && data?.products.length < data?.total) {
+      setSkipNumber(prevValue => prevValue + (data?.limit ?? 0));
     }
   };
 
@@ -66,7 +65,17 @@ export function Home() {
           </View>
         </View>
       </View>
-      {isLoading ? <Text>Loading...</Text> : null}
+      {isLoading ? (
+        <View
+          style={{
+            display: 'flex',
+            height: '50%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Loader />
+        </View>
+      ) : null}
       {!isLoading && data
         ? Array.isArray(data?.products) &&
           data?.products?.length > 0 && (
@@ -83,9 +92,11 @@ export function Home() {
             </View>
           )
         : null}
-      {/*{data &&*/}
-      {/*  Array.isArray(data?.products) &&*/}
-      {/*  data?.products?.length === 0 && <Text>No Products Found</Text>}*/}
+      {isError ? (
+        <View>
+          <Text>Something went wrong. Please try again later.</Text>
+        </View>
+      ) : null}
     </View>
   );
 }

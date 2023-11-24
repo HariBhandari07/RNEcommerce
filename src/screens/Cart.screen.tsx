@@ -1,5 +1,11 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { RootState, useAppDispatch, useAppSelector } from '../redux/store';
 import {
   addToCart,
@@ -46,44 +52,46 @@ export function Cart() {
       ) : null}
       {(Array.isArray(cartProducts) && cartProducts.length) > 0 ? (
         <View style={styles.cartContentContainer}>
-          <View>
+          <ScrollView>
             <View style={styles.header}>
               <BackButton />
               <Text style={styles.title}>
                 Shopping Cart ({cartItemTotalCount})
               </Text>
             </View>
-            {cartProducts.map(product => (
-              <View key={product.id} style={styles.itemContainer}>
-                <View style={styles.productInfo}>
-                  <Image
-                    source={{ uri: product?.thumbnail }}
-                    style={styles.thumbnail}
-                  />
-                  <View>
-                    <Text style={styles.productName}>{product.title}</Text>
-                    <Text style={styles.price}>
-                      ${product.price.toFixed(2)}
-                    </Text>
+            <View>
+              {cartProducts.map(product => (
+                <View key={product.id} style={styles.itemContainer}>
+                  <View style={styles.productInfo}>
+                    <Image
+                      source={{ uri: product?.thumbnail }}
+                      style={styles.thumbnail}
+                    />
+                    <View>
+                      <Text style={styles.productName}>{product.title}</Text>
+                      <Text style={styles.price}>
+                        ${product.price.toFixed(2)}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.quantityContainer}>
+                    <TouchableOpacity
+                      style={styles.quantityButton}
+                      onPress={() => handleDecreaseItemCount(product)}>
+                      <Text style={styles.quantityButtonText}>-</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.quantity}>{product.cartQty}</Text>
+                    <TouchableOpacity
+                      style={styles.quantityButton}
+                      onPress={() => handleIncreaseItemCount(product)}
+                      disabled={product.cartQty === product.stock}>
+                      <Text style={styles.quantityButtonText}>+</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
-                <View style={styles.quantityContainer}>
-                  <TouchableOpacity
-                    style={styles.quantityButton}
-                    onPress={() => handleDecreaseItemCount(product)}>
-                    <Text style={styles.quantityButtonText}>-</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.quantity}>{product.cartQty}</Text>
-                  <TouchableOpacity
-                    style={styles.quantityButton}
-                    onPress={() => handleIncreaseItemCount(product)}
-                    disabled={product.cartQty === product.stock}>
-                    <Text style={styles.quantityButtonText}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
-          </View>
+              ))}
+            </View>
+          </ScrollView>
 
           {/*Product Total*/}
           <View style={styles.summaryContainer}>

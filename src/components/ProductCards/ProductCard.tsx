@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { HeartIcon, PlusIcon } from '../Icons/Icons';
 import { ICartProduct, IProduct } from '../../api/product/product.types';
 import { theme } from '../../theme';
-import { addToFavorite } from '../../redux/favorites/favoriteSlice';
+import { toggleFavorite } from '../../redux/favorites/favoriteSlice';
 import { addToCart } from '../../redux/cart/cartSlice';
 import { useNavigation } from '@react-navigation/native';
 import { useAppDispatch } from '../../redux/store';
@@ -12,11 +12,12 @@ export interface IProductCardProps {
   product: IProduct;
   index: number;
 }
+
 export function ProductCard({ product, index }: IProductCardProps) {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const handleFavoritePress = (product: IProduct) => {
-    dispatch(addToFavorite(product));
+    dispatch(toggleFavorite(product));
   };
 
   const goToProductDetailsPage = (productId: number) => {
